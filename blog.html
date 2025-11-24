@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog - atelierdeouf</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 300vh;
+      overflow-x: hidden;
+      font-family: 'VT323', monospace;
+      background: black;
+      position: relative;
+    }
+
+    /* VIDEO FONDO MÁS NÍTIDO */
+    #video-fondo {
+      position: fixed;         /* ahora no se estira 300vh */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;           /* resolución real de la pantalla */
+      object-fit: cover;       /* mantiene nitidez */
+      z-index: -2;
+    }
+
+    /* se simula el scroll moviendo object-position */
+    body {
+      --scroll: 0;
+    }
+
+    #video-fondo {
+      object-position: center calc(var(--scroll) * 1.5px);
+    }
+
+    .pregunta {
+      position: fixed;
+      top: 40px;
+      width: 100%;
+      text-align: center;
+      font-size: 38px;
+      color: white;
+      text-shadow: 0 0 10px white;
+      z-index: 20;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    /* INPUTS MEJORADOS */
+    .inputs-container {
+      position: fixed;
+      bottom: 40px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 20;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .entrada, .nombre {
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+      width: 100%;
+      max-width: 600px;
+      padding: 14px;
+      border: 2px solid white;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.35);
+      color: white;
+      outline: none;
+    }
+
+    /* MENSAJES FLOTANTES */
+    .mensaje {
+      position: absolute;
+      font-family: 'VT323', monospace;
+      font-size: 28px;
+      max-width: 70vw;        /* evita que se salga */
+      word-break: break-word; /* permite cortar palabras largas */
+      white-space: normal;    /* ya NO se sale de la pantalla */
+      pointer-events: none;
+      animation: flotar 15s linear forwards;
+      z-index: 15;
+    }
+
+    @keyframes flotar {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(-480px);
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width: 600px) {
+      .pregunta {
+        font-size: 26px;
+      }
+      .entrada, .nombre {
+        font-size: 20px;
+      }
+      .mensaje {
+        font-size: 22px;
+        max-width: 85vw;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- VIDEO DE FONDO DESPLAZABLE Y NÍTIDO -->
+  <video id="video-fondo" autoplay muted loop playsinline>
+    <source src="videoblog.mp4" type="video/mp4">
+  </video>
+
+  <div class="pregunta">
+    what is your take on individualism vs collectivism?
+  </div>
+
+  <div class="inputs-container">
+    <input class="nombre" id="nombre" type="text" placeholder="your name…">
+    <input class="entrada" id="entrada" type="text" placeholder="write your thoughts…"
+      onkeydown="if(event.key === 'Enter') enviarMensaje()">
+  </div>
+
+  <script>
+    /* LÍNEA QUE CREA EL EFECTO DE SCROLL EN EL VÍDEO */
+    window.addEventListener('scroll', () => {
+      document.body.style.setProperty('--scroll', window.scrollY);
+    });
+
+    function pastelColor() {
+      const r = Math.floor(Math.random() * 127 + 127);
+      const g = Math.floor(Math.random() * 127 + 127);
+      const b = Math.floor(Math.random() * 127 + 127);
+      return `rgb(${r},${g},${b})`;
+    }
+
+    function enviarMensaje() {
+      const inputMsg = document.getElementById('entrada');
+      const inputName = document.getElementById('nombre');
+      
+      const texto = inputMsg.value.trim();
+      const nombre = inputName.value.trim();
+
+      if (!texto || !nombre) return;
+
+      const msg = document.createElement('div');
+      msg.className = 'mensaje';
+      msg.textContent = `${nombre}: ${texto}`;
+
+      msg.style.left = (Math.random() * 70 + 10) + "%";
+      msg.style.top = (window.scrollY + window.innerHeight - 80) + "px";
+
+      const color = pastelColor();
+      msg.style.color = color;
+      msg.style.textShadow = `0 0 12px ${color}`;
+
+      document.body.appendChild(msg);
+
+      inputMsg.value = "";
+    }
+  </script>
+
+</body>
+</html>
